@@ -14,21 +14,24 @@ class ProgramObject():
 class VM():
 
     def run(po):
+        # use ip as an instruction pointer
         ip = 0
+        # use tmp to store variables
         tmp = {}
-
+        # code stores bytecode instructions
         code = []
+        # store is for globals and constants
         store = {}
 
         code.append(po.code)
-
         constant_index = 1
 
+        # load constants
         for c in po._const:
             store['c{0}'.format(constant_index)] = c
             constant_index += 1
 
-
+        # eval
         while(True):
             try:
                 ins = po._code[ip].split(" ")
@@ -57,6 +60,7 @@ class VM():
                 print(result)
                 return result
 
+# TODO: get these tests out of here and break out the classes into separate files
 po = ProgramObject()
 po.code("set t1 1")
 po.code("set t2 2")
