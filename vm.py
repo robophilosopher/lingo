@@ -121,6 +121,9 @@ class VM():
                     # move the ip by the distance to the jump point
                     ip = ip + (ip - int(ins[2]))
 
+            # if op == 'br':
+                # then go to the label 
+
             if op == 'cload':
                 tmp[ins[1]] = store[ins[2]]
 
@@ -128,57 +131,6 @@ class VM():
                 # result is for testing purposes
                 print(tmp[ins[1]])
 
-po = ProgramObject()
-po.code("set t1 1")
-po.code("set t2 2")
-po.code("iadd t3 t1 t2")
-po.code("print t3")
-assert(VM.run(po)) == 3
 
 po = ProgramObject()
-po.code("set t1 2")
-po.code("set t3 3")
-po.code("isub t4 t3 t1")
-po.code("set t5 1")
-po.code("isub t2 t4 t5")
-po.code("print t2")
-assert(VM.run(po)) == 0
-
-po = ProgramObject()
-po.code("set t1 2")
-po.code("set t3 3")
-po.code("set t4 1")
-po.code("isub t5 t1 t4")
-po.code("isub t2 t3 t5")
-po.code("print t2")
-assert(VM.run(po)) == 2
-
-po = ProgramObject()
-po.const('hello world')
-po.code('cload t1 c1')
-po.code('print t1')
-assert(VM.run(po)) == 'hello world'
-
-po = ProgramObject()
-po.const('bar')
-po.const('baz')
-po.code('cload t1 c1')
-po.code('set t2 1')
-po.code('cload t3 c2')
-po.code('print t3')
-po.code('set t2 2')
-po.code('print t1')
-po.code('print t2')
-VM.run(po)
-
-
-
-po = ProgramObject()
-po.code("set t1 0")
-po.code("set t2 42")
-po.code("bru t1", po.ilbl('else'))
-po.code("print t1")
-po.deciLbl("else")
-po.code("print t2")
-po.end()
 VM.run(po)
