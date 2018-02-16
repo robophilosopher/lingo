@@ -1,6 +1,5 @@
 #TODO: store constants in const, not store
 # the Buffer type represents an array of chars
-# Buffer types should never
 # For single chars, you don't want to generate a whole string
 # Just use the char type
 # Data in the constant pool and store are of type B for buffer
@@ -108,7 +107,7 @@ class VM():
             op = ins[0]
 
             if op == 'set':
-                tmp[ins[1]] = ins[2]
+                tmp[ins[1]] = ins[3]
 
             if op == 'iadd':
                 tmp[ins[1]] = int(tmp[ins[2]]) + int(tmp[ins[3]])
@@ -121,8 +120,9 @@ class VM():
                     # move the ip by the distance to the jump point
                     ip = ip + (ip - int(ins[2]))
 
-            # if op == 'br':
-                # then go to the label 
+            if op == 'br':
+                # move the ip by the distance to the jump point
+                ip = ip + (ip - int(ins[2]))
 
             if op == 'cload':
                 tmp[ins[1]] = store[ins[2]]
@@ -133,4 +133,11 @@ class VM():
 
 
 po = ProgramObject()
+po.code("set t'1 i: 1")
+po.code("set t'2 i: 2")
+po.code("iadd t'3 t'1 t'2")
+po.code("print t'3")
 VM.run(po)
+
+po = ProgramObject()
+po.code("set t'1 a: s'1")
