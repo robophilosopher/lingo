@@ -128,10 +128,35 @@ class VM():
             if op == 'cload':
                 tmp[ins[1]] = store[ins[2]]
 
+            if op == 'arr':
+                # example array code: arr s'1 a:c'6
+                list = []
+                _, length = ins[2].split(':')
+                for i in range(0, int(length)):
+                    list.append(0)
+
+                store[ins[1]] = list
+
+            if op == 'put':
+                # this code is used to insert into an array
+                array = store[ins[1]]
+                _, index = ins[2].split(':')
+                val_type, val = ins[3].split(':')
+                
+                # TODO: need some type handling based on val_type
+                array[int(index)] = val
+
+            if op == 'get':
+                # this code gets from an array and sets to a temp
+                # get t'1 s'1 i:1
+                array = store[ins[2]]
+                _, index = ins[3].split(':')
+                tmp[ins[1]] = array[int(index)]
+
             if op == 'print':
                 print(tmp[ins[1]])
 
-
+# print 3
 po = ProgramObject()
 po.code("set t'1 i: 1")
 po.code("set t'2 i: 2")
@@ -151,4 +176,12 @@ po.code("br", po.ilbl("end"))
 po.code("print t'3")
 po.deciLbl("end")
 po.end()
+VM.run(po)
+
+# print 44 from array
+po = ProgramObject()
+po.code("arr s'1 i:1")
+po.code("put s'1 i:0 i:44")
+po.code("get t'1 s'1 i:0")
+po.code("print t'1")
 VM.run(po)
