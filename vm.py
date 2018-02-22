@@ -44,7 +44,7 @@ import pdb
 class ProgramObject():
     def __init__(self):
         self._code = []
-        self._const = []
+        self._const = [0]
         self._label_index = {}
         self._labeled_instruction_index = {}
         self._ip = 0
@@ -137,6 +137,8 @@ class VM():
 
                 store[ins[1]] = list
 
+            # put <destination register> <index> <value>
+            # put t'1 i:n s:c'1
             if op == 'put':
                 # this code is used to insert into an array
                 array = store[ins[1]]
@@ -153,35 +155,29 @@ class VM():
                 _, index = ins[3].split(':')
                 tmp[ins[1]] = array[int(index)]
 
+            if op == 'rec':
+                _, record_def_pointer = ins[2].split("''")
+                store.append(po._const[record_def_pointer])
+                tmp[ins[1]] = "R@c'8"
+
             if op == 'print':
                 print(tmp[ins[1]])
 
-# print 3
+# print Bob and 1981 from a record
 po = ProgramObject()
-po.code("set t'1 i: 1")
-po.code("set t'2 i: 2")
-po.code("iadd t'3 t'1 t'2")
-po.code("print t'3")
-VM.run(po)
-
-# print 42 when t'1 is 1
-# otherwise, print 24
-po = ProgramObject()
-po.code("set t'1 i: 0")
-po.code("set t'2 i: 42")
-po.code("set t'3 i: 24")
-po.code("bru t'1", po.ilbl("end"))
-po.code("print t'2")
-po.code("br", po.ilbl("end"))
-po.code("print t'3")
-po.deciLbl("end")
-po.end()
-VM.run(po)
-
-# print 44 from array
-po = ProgramObject()
-po.code("arr s'1 i:1")
-po.code("put s'1 i:0 i:44")
-po.code("get t'1 s'1 i:0")
-po.code("print t'1")
+# declare key and value for record
+po.const("S:name")    # c'1 upcase S means fieldname
+po.const("S:dob")     # c'2
+po.const("s:Bob")     # c'3
+po.const("s:1981")    # c'4
+po.const("A:2")       # c'5 upcase A means array in Record Definition
+po.const("s:c'1")     # c'6
+po.const("s:c'2")     # c'7
+# declare a record definition pointing to array A
+po.const("R:c'5")     # c'8 big R is for record definitions, while little r is for instances
+# create a record definition pointer
+# the following command will insert the pointer into store
+po.code("rec t'1 R@c'8") # at runtime, r@c'8 will be replaced with r:s'1
+po.code("put t'1 i:1 s:c'3")
+po.code("put t'1 i:2 s:c'4")
 VM.run(po)
