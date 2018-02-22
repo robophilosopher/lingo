@@ -7,22 +7,17 @@ LEFT_PAREN = '('
 RIGHT_PAREN = ')'
 
 class STree():
-    def __init__(self, string):
-        # remove whitespace
-        self._string = string.replace(" ", "")
 
-        return self.string_to_tree(self._string)
+    def tree_me(self, string):
 
-    def string_to_tree(self, string):
-
-        chars = self.to_chars(string)
+        chars = self.to_char_list(string)
 
         for op in OPS:
             self.rewrite_list(chars, op)
 
-        print(chars)
+        return chars
 
-    def to_chars(self, string):
+    def to_char_list(self, string):
         chars = []
         i = 0
         lookahead = i + 1
@@ -68,6 +63,10 @@ class STree():
                     self.rewrite_list(chars, op)
                 i += 1
 
+st = STree()
+print(st.tree_me("1 + 2 * 3 + 4"))
+assert(st.tree_me("1 + 2 * 3 + 4")) == [['+', ['+', '1', ['*', '2', '3']], '4']]
 
-STree("1 + 2 * 3 + 4")
-STree("5 + 1 * 2 * 3").to_chars("12 + 2 * 3 + 4")
+st = STree()
+print(st.tree_me("505 + 1 * 2 * 3"))
+assert(st.tree_me("505 + 1 * 2 * 3")) == [['+', '505', ['*', ['*', '1', '2'], '3']]]
